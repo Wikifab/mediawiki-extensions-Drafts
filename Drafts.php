@@ -98,6 +98,9 @@ $wgHooks['EditPageBeforeEditButtons'][] = 'DraftHooks::onEditPageBeforeEditButto
 // Register load hook
 $wgHooks['EditPage::showEditForm:initial'][] = 'DraftHooks::loadForm';
 
+
+$wgHooks['ResourceLoaderGetConfigVars'][] = "DraftHooks::onResourceLoaderGetConfigVars";
+
 // Register controls input for PageForms
 $wgHooks['PageForms::FormPrinterSetup'][] = 'DraftHooks::onFormPrinterSetup';
 
