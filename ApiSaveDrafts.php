@@ -15,6 +15,10 @@ class ApiSaveDrafts extends ApiBase {
 
 		$params = $this->extractRequestParams();
 
+		if (isset($params['isPageFormData']) && $params['isPageFormData']) {
+			$params['text'] = NsDrafts\PageFormConnectors::convertSerializeFormToSemanticTextContent($params['title'], $params['text']);
+		}
+
 		$draft = Draft::newFromID( $params['id'] );
 		$draft->setToken( $params['drafttoken'] );
 		$draft->setTitle( Title::newFromText( $params['title'] ) );
@@ -81,6 +85,9 @@ class ApiSaveDrafts extends ApiBase {
 				ApiBase::PARAM_REQUIRED => true,
 			),
 			'token' => null,
+			'isPageFormData' => array(
+				ApiBase::PARAM_TYPE => 'boolean',
+			),
 		);
 	}
 

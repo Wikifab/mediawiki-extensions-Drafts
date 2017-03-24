@@ -64,6 +64,7 @@ $wgAutoloadClasses['DraftHooks'] = $dir . 'Drafts.hooks.php';
 
 // API module
 $wgAutoloadClasses['ApiSaveDrafts'] = "$dir/ApiSaveDrafts.php";
+$wgAutoloadClasses['NsDrafts\\PageFormConnectors'] = "$dir/includes/PageFormConnectors.php";
 $wgAPIModules['savedrafts'] = 'ApiSaveDrafts';
 
 
@@ -96,6 +97,13 @@ $wgHooks['EditPageBeforeEditButtons'][] = 'DraftHooks::onEditPageBeforeEditButto
 
 // Register load hook
 $wgHooks['EditPage::showEditForm:initial'][] = 'DraftHooks::loadForm';
+
+// Register controls input for PageForms
+$wgHooks['PageForms::FormPrinterSetup'][] = 'DraftHooks::onFormPrinterSetup';
+
+// Register load hook for PageForms
+$wgHooks['FormEdit::showEditForm:initial'][] = 'DraftHooks::pfLoadForm';
+$wgHooks['PageForms::EditFormInitContent'][] = 'DraftHooks::pfEditFormInitContent';
 
 // Register JS / CSS
 $wgResourceModules[ 'ext.Drafts' ] = array(

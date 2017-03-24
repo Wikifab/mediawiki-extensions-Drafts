@@ -53,6 +53,7 @@ function Draft() {
 					break;
 				default: break;
 			}
+			form.wpDraftSave.disabled = false;
 		}
 	};
 
@@ -105,13 +106,58 @@ function Draft() {
 		clearTimeout( timer );
 		timer = null;
 	};
+	
+	/**
+	 * send draft data of PageForm edit page to server to be saved
+	 */
+	this.pfSave = function( event ) {
+		event.preventDefault();
+		// Checks if a save is already taking place
+		if (state === 'saving') {
+			// Exits function immediately
+			return;
+		}
+		var formdata = JSON.stringify( $(form).serializeArray() );
+		
+		// Sets state to saving
+		self.setState( 'saving' );
+		var params = {
+			action: 'savedrafts',
+			drafttoken: form.wpDraftToken.value,
+			token: form.wpEditToken.value,
+			id: form.wpDraftID.value,
+			title: form.wpDraftTitle.value,
+			section: '',//form.wpSection.value,
+			starttime: '',//form.wpStarttime.value,
+			edittime: '',//form.wpEdittime.value,
+			scrolltop: '',//form.wpTextbox1.scrollTop,
+			text: formdata,//form.wpTextbox1.value,
+			isPageFormData: true,
+			summary: '',//form.wpSummary.value
+		};
+
+		if ( form.wpMinoredit !== undefined && form.wpMinoredit.checked ) {
+			params.minoredit = 1;
+		}
+
+		// Performs asynchronous save on server
+		var api = new mediaWiki.Api();
+		api.post(params).done( self.respond ).fail( self.respond );
+
+		// Re-allow request if it is not done in 10 seconds
+		self.timeoutID = window.setTimeout(
+			"wgDraft.setState( 'changed' );", 10000
+		);
+		// Ensure timer is cleared in case we saved manually before it expired
+		clearTimeout( timer );
+		timer = null;
+	};
 
 	/**
 	 * Updates the user interface to represent being out of sync with the server
 	 */
 	this.change = function() {
 		// Sets state to changed
-		self.setState( 'changed' );
 		// Checks if timer is pending and if we want to wait for user input
 		if ( !configuration.autoSaveBasedOnInput ) {
 			if ( timer ) {
@@ -161,7 +207,29 @@ function Draft() {
 				autoSaveTimeout: mediaWiki.config.get( 'wgDraftAutoSaveTimeout' ),
 				autoSaveBasedOnInput: mediaWiki.config.get( 'wgDraftAutoSaveInputBased' )
 			};
+		} else {
+			// init for formEdit action (PageForm extension)
+			form = document.forms['pfForm']
+			if ( form && form.wpDraftSave ) {
+				jQuery( form.wpDraftSave ).on( 'click', self.pfSave );
+				// Handle keeping track of state by watching for changes to fields
+				jQuery( form.wpTextbox1 ).on( 'keypress keyup keydown paste cut', self.change );
+				jQuery( form.wpSummary ).on( 'keypress keyup keydown paste cut', self.change );
+				if ( form.wpMinoredit ) {
+					jQuery( form.wpMinoredit ).on( 'change', self.change );
+				}
+				// Gets configured specific values
+				configuration = {
+					autoSaveWait: mediaWiki.config.get( 'wgDraftAutoSaveWait' ),
+					autoSaveTimeout: mediaWiki.config.get( 'wgDraftAutoSaveTimeout' ),
+					autoSaveBasedOnInput: mediaWiki.config.get( 'wgDraftAutoSaveInputBased' )
+				};
+				this.setState('changed');
+			}
 		}
+		
+		
+		
 	};
 
 	/**
@@ -169,6 +237,7 @@ function Draft() {
 	 * @param {Object} data
 	 */
 	this.respond = function( data ) {
+
 		// Checks that an error did not occur
 		if ( data.savedrafts && data.savedrafts.id ) {
 			// Changes state to saved

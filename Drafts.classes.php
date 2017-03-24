@@ -210,8 +210,12 @@ abstract class Drafts {
 				// Get article title text
 				$htmlTitle = htmlspecialchars( $draft->getTitle()->getPrefixedText() );
 				// Build Article Load link
+				$editAction = 'edit';
+				if ($wgRequest->getText( 'action' ) == 'formedit') {
+					$editAction = 'formedit';
+				}
 				$urlLoad = $draft->getTitle()->getFullURL(
-					'action=edit&draft=' . urlencode( $draft->getID() )
+					'action=' . $editAction . '&draft=' . urlencode( $draft->getID() )
 				);
 				// Build discard link
 				$urlDiscard = SpecialPage::getTitleFor( 'Drafts' )->getFullURL(
@@ -226,6 +230,11 @@ abstract class Drafts {
 					$wgRequest->getText( 'action' ) == 'submit'
 				) {
 					$urlDiscard .= '&returnto=' . urlencode( 'edit' );
+				}
+				if (
+					$wgRequest->getText( 'action' ) == 'formedit'
+				) {
+					$urlDiscard .= '&returnto=' . urlencode( 'formedit' );
 				}
 				// Append section to titles and links
 				if ( $draft->getSection() !== null ) {

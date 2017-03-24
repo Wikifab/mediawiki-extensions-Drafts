@@ -176,6 +176,208 @@ class DraftHooks {
 		return true;
 	}
 
+
+	//'PageForms::EditFormPreloadText', array( &$preloadContent, $targetTitle, $formTitle ) );
+
+	public static function pfEditFormInitContent(& $preloadContent, $targetTitle, $formTitle) {
+
+		// if a draft id is passed in request, change loaded content with draft content
+		global $wgRequest, $wgUser;
+
+		if ( $wgUser->isAllowed( 'edit' ) && $wgUser->isLoggedIn() ) {
+			// Get draft
+			$draft = Draft::newFromID( $wgRequest->getIntOrNull( 'draft' ) );
+			// Load form values
+			if ( $draft->exists() ) {
+				$preloadContent = $draft->getText();
+			}
+		}
+
+	}
+
+	/**
+	 * for use with PageForm extension
+	 * FormEdit::showEditForm:initial hook
+	 * Load draft...
+	 */
+	public static function pfLoadForm( PFFormEdit $editpage ) {
+		$context = $editpage->getContext();
+		$user = $context->getUser();
+		global $wgRequest;
+
+
+		$wgRequest->setVal('Tuto Details[Description]', 'Big description');
+
+
+		global $pfpreloadContent ;
+
+		if ( !$user->getOption( 'extensionDrafts_enable', 'true' ) ) {
+			return true;
+		}
+
+		// Check permissions
+		$request = $context->getRequest();
+		if ( $user->isAllowed( 'edit' ) && $user->isLoggedIn() ) {
+			// Get draft
+			$draft = Draft::newFromID( $request->getIntOrNull( 'draft' ) );
+			// Load form values
+			if ( $draft->exists() ) {
+				$pfpreloadContent = $draft->getText();
+				$editpage->mForm = $draft->getText();
+				$pfpreloadContent = $editpage->mForm;
+				// Override initial values in the form with draft data
+				$editpage->textbox1 = $draft->getText();
+				$editpage->summary = $draft->getSummary();
+				$editpage->scrolltop = $draft->getScrollTop();
+				$editpage->minoredit = $draft->getMinorEdit() ? true : false;
+			}
+
+			// Save draft on non-save submission
+			if ( $request->getVal( 'action' ) == 'submit' &&
+					$user->matchEditToken( $request->getText( 'wpEditToken' ) ) &&
+					is_null( $request->getText( 'wpDraftTitle' ) ) )
+			{
+				// If the draft wasn't specified in the url, try using a
+				// form-submitted one
+				if ( !$draft->exists() ) {
+					$draft = Draft::newFromID(
+							$request->getIntOrNull( 'wpDraftID' )
+							);
+				}
+				// Load draft with info
+				$draft->setTitle( Title::newFromText(
+						$request->getText( 'wpDraftTitle' ) )
+						);
+				$draft->setSection( $request->getInt( 'wpSection' ) );
+				$draft->setStartTime( $request->getText( 'wpStarttime' ) );
+				$draft->setEditTime( $request->getText( 'wpEdittime' ) );
+				$draft->setSaveTime( wfTimestampNow() );
+				$draft->setScrollTop( $request->getInt( 'wpScrolltop' ) );
+				$draft->setText( $request->getText( 'wpTextbox1' ) );
+				$draft->setSummary( $request->getText( 'wpSummary' ) );
+				$draft->setMinorEdit( $request->getInt( 'wpMinoredit', 0 ) );
+				// Save draft
+				$draft->save();
+				// Use the new draft id
+				$request->setVal( 'draft', $draft->getID() );
+			}
+		}
+
+		$out = $context->getOutput();
+
+		$numDrafts = Drafts::num( $context->getTitle() );
+		// Show list of drafts
+		if ( $numDrafts  > 0 ) {
+			if ( $request->getText( 'action' ) !== 'submit' ) {
+				$out->addHTML( Xml::openElement(
+						'div', array( 'id' => 'drafts-list-box' ) )
+						);
+				$out->addHTML( Xml::element(
+						'h3', null, $context->msg( 'drafts-view-existing' )->text() )
+						);
+				$out->addHTML( Drafts::display( $context->getTitle() ) );
+				$out->addHTML( Xml::closeElement( 'div' ) );
+			} else {
+				$jsWarn = "if( !wgAjaxSaveDraft.insync ) return confirm(" .
+						Xml::encodeJsVar( $context->msg( 'drafts-view-warn' )->text() ) .
+						")";
+						$link = Xml::element( 'a',
+								array(
+										'href' => $context->getTitle()->getFullURL( 'action=edit' ),
+										'onclick' => $jsWarn
+								),
+								$context->msg( 'drafts-view-notice-link' )->numParams( $numDrafts )->text()
+								);
+						$out->addHTML( $context->msg( 'drafts-view-notice' )->rawParams( $link )->escaped() );
+			}
+		}
+		// Continue
+		return true;
+	}
+
+	/**
+	 * for use with PageForm extension : initialize on formEdit page
+	 * @param PF_FormPrinter $formPrinter
+	 */
+	public static function onFormPrinterSetup ( $formPrinter ) {
+		// register new input button for pageForms templates
+		$formPrinter->setInputTypeHook('saveDraft', 'DraftHooks::pageFormInputSaveDraft', array());
+	}
+
+	/**
+	 * for use with PageForm extension :
+	 * Add draft saving control for use in PageForm templates
+	 */
+	public static function pageFormInputSaveDraft($cur_value, $input_name, $is_mandatory, $is_disabled, $field_args) {
+		// TODO : manage hook PageForms::EditFormPreloadText
+		global $wgUser, $wgOut, $wgRequest;
+
+		if ( ! $wgUser || !$wgUser->getOption( 'extensionDrafts_enable', 'true' ) ) {
+			return '';
+		}
+		$wgOut->addModules( 'ext.Drafts' );
+		//$title = Title::newFromText( $wgRequest->getText('title') );
+
+		// Build XML
+		$html = Xml::openElement( 'script',
+				array(
+						'type' => 'text/javascript',
+						'language' => 'javascript'
+				)
+				);
+		$buttonAttribs = array(
+				'id' => 'wpDraftSave',
+				'name' => 'wpDraftSave',
+				'class' => 'mw-ui-button',
+				'value' =>  wfMessage( 'drafts-save-save' )->text(),
+		);
+		$attribs = Linker::tooltipAndAccesskeyAttribs( 'drafts-save' );
+		if ( isset( $attribs['accesskey'] ) ) {
+			$buttonAttribs['accesskey'] = $attribs['accesskey'];
+		}
+		if ( isset( $attribs['tooltip'] ) ) {
+			$buttonAttribs['title'] = $attribs['title'];
+		}
+		$html .= Xml::encodeJsCall(
+				'document.write',
+				array( Xml::element( 'input',
+						array( 'type' => 'submit' ) + $buttonAttribs
+						+ ( $wgRequest->getText( 'action' ) !== 'submit' ?
+								array ( 'disabled' => 'disabled' )
+								: array()
+								)
+						) )
+				);
+		$html .= Xml::closeElement( 'script' );
+		$html .= Xml::openElement( 'noscript' );
+		$html .= Xml::element( 'input',
+				array( 'type' => 'submit' ) + $buttonAttribs
+				);
+		$html .= Xml::closeElement( 'noscript' );
+		$html .= Xml::element( 'input',
+				array(
+						'type' => 'hidden',
+						'name' => 'wpDraftToken',
+						'value' => MWCryptRand::generateHex( 32 )
+				)
+				);
+		$html .= Xml::element( 'input',
+				array(
+						'type' => 'hidden',
+						'name' => 'wpDraftID',
+						'value' => $wgRequest->getInt( 'draft', '' )
+				)
+				);
+		$html .= Xml::element( 'input',
+				array(
+						'type' => 'hidden',
+						'name' => 'wpDraftTitle',
+						'value' => $wgRequest->getText('title') //$title->getPrefixedText()
+				)
+				);
+		return $html;
+	}
+
 	/**
 	 * EditPageBeforeEditButtons hook
 	 * Add draft saving controls
