@@ -62,10 +62,18 @@ class DraftHooks {
 		$isWatch, $section, $flags, $revision, $status, $baseRevId
 	) {
 		global $wgRequest;
+
 		// Check if the save occurred from a draft
 		$draft = Draft::newFromID( $wgRequest->getIntOrNull( 'wpDraftID' ) );
 		if ( $draft->exists() ) {
 			// Discard the draft
+			$draft->discard( $user );
+		}
+		$title = $article->getTitle();
+		// or other param : when saving a page, we delete every draft of this page, for the current user
+		$drafts = Drafts::get( $title, $user->getID());
+		foreach ($drafts as $draft) {
+			echo 'DELETE DRAFT ' . $draft->getId() . '<br/>';
 			$draft->discard( $user );
 		}
 		// Continue
