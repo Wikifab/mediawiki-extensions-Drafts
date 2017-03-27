@@ -172,7 +172,10 @@ abstract class Drafts {
 	 * @return string HTML to be shown to the user
 	 */
 	public static function display( $title = null, $userID = null ) {
-		global $wgRequest, $wgUser, $wgLang;
+		global $wgRequest, $wgUser, $wgLang, $wgDraftDisplayAsTab;
+		if( ! $wgDraftDisplayAsTab) {
+			return self::displayAsUl($title, $userID);
+		}
 		// Gets draftID
 		$currentDraft = Draft::newFromID( $wgRequest->getIntOrNull( 'draft' ) );
 		// Output HTML for list of drafts
@@ -287,6 +290,106 @@ abstract class Drafts {
 				$html .= Xml::closeElement( 'tr' );
 			}
 			$html .= Xml::closeElement( 'table' );
+			// Return html
+			return $html;
+		}
+		return '';
+	}
+
+
+
+	/**
+	 * Outputs a list of existing drafts
+	 *
+	 * @param $title Title [optional] Title of article, defaults to all articles
+	 * @param $userID Integer: [optional] ID of user, defaults to current user
+	 * @return string HTML to be shown to the user
+	 */
+	public static function displayAsUl( $title = null, $userID = null) {
+		global $wgRequest, $wgUser, $wgLang;
+		// Gets draftID
+		$currentDraft = Draft::newFromID ( $wgRequest->getIntOrNull ( 'draft' ) );
+		// Output HTML for list of drafts
+		$drafts = Drafts::get ( $title, $userID );
+		if (count ( $drafts ) > 0) {
+			$html = '';
+
+			// Build XML
+			$html .= Xml::openElement( 'div',
+					array(
+							'class' => 'draft-list-container',
+							'id' => 'drafts-list-table'
+					)
+			);
+			$html .= Xml::openElement ( 'ul' );
+
+			// Add existing drafts for this page and user
+			/**
+			 *
+			 * @var $draft Draft
+			 */
+			foreach ( $drafts as $draft ) {
+				// Get article title text
+				$htmlTitle = htmlspecialchars ( $draft->getTitle ()->getPrefixedText () );
+				// Build Article Load link
+				$editAction = 'edit';
+				if ($wgRequest->getText ( 'action' ) == 'formedit') {
+					$editAction = 'formedit';
+				}
+				$urlLoad = $draft->getTitle ()->getFullURL ( 'action=' . $editAction . '&draft=' . urlencode ( $draft->getID () ) );
+				// Build discard link
+				$urlDiscard = SpecialPage::getTitleFor ( 'Drafts' )->getFullURL ( sprintf ( 'discard=%s&token=%s', urlencode ( $draft->getID () ), urlencode ( $wgUser->getEditToken () ) ) );
+				// If in edit mode, return to editor
+				if ($wgRequest->getText ( 'action' ) == 'edit' || $wgRequest->getText ( 'action' ) == 'submit') {
+					$urlDiscard .= '&returnto=' . urlencode ( 'edit' );
+				}
+				if ($wgRequest->getText ( 'action' ) == 'formedit') {
+					$urlDiscard .= '&returnto=' . urlencode ( 'formedit' );
+				}
+				// Append section to titles and links
+				if ($draft->getSection () !== null) {
+					// Detect section name
+					$lines = explode ( "\n", $draft->getText () );
+
+					// If there is any content in the section
+					if (count ( $lines ) > 0) {
+						$htmlTitle .= '#' . htmlspecialchars ( trim ( trim ( substr ( $lines [0], 0, 255 ), '=' ) ) );
+					}
+					// Modify article link and title
+					$urlLoad .= '&section=' . urlencode ( $draft->getSection () );
+					$urlDiscard .= '&section=' . urlencode ( $draft->getSection () );
+				}
+				// Build XML
+
+				$html .= Xml::openElement ( 'li' );
+				$html .= Xml::openElement ( 'span' );
+				$html .= Xml::element ( 'a', array (
+						'href' => $urlLoad,
+						'style' => 'font-weight:' . ($currentDraft->getID () == $draft->getID () ? 'bold' : 'normal')
+				), $htmlTitle );
+				$html .= Xml::closeElement ( 'span' );
+				$html .=' ';
+				$html .= Xml::element ( 'span', array (
+						'class' => 'draft-savetime-label'
+				), wfMessage ( 'drafts-view-saved' )->text () );
+				$html .=' ';
+				$html .= Xml::element ( 'span', array (
+						'class' => 'draft-savetime'
+				), MWTimestamp::getInstance ( $draft->getSaveTime () )->getHumanTimestamp () );
+				$html .=' ';
+				$html .= Xml::openElement ( 'span', array (
+						'class' => 'draft-discard'
+				) );
+				$jsClick = "if( wgDraft.getState() !== 'unchanged' )" . "return confirm(" . Xml::encodeJsVar ( wfMessage ( 'drafts-view-warn' )->text () ) . ")";
+				$html .= Xml::element ( 'a', array (
+						'href' => $urlDiscard,
+						'onclick' => $jsClick
+				), wfMessage ( 'drafts-view-discard' )->text () );
+				$html .= Xml::closeElement ( 'span' );
+				$html .= Xml::closeElement ( 'li' );
+			}
+			$html .= Xml::closeElement ( 'ul' );
+			$html .= Xml::closeElement ( 'div' );
 			// Return html
 			return $html;
 		}

@@ -15,6 +15,8 @@
 	"drafts-view-summary": "Cette page spéciale liste tous les brouillons existant.\nLes brouillons inutilisés seront automatiquement supprimés après $1 jour{{PLURAL:$1||s}}.",
 	"drafts-view-article": "Page",
 	"drafts-view-existing": "Brouillons existants",
+	"drafts-view-existing-message": "Vous avez des brouillons non enregistrés pour cette page, vous pouvez reprendre vos modifications en sélectionnant le brouillon ci dessous. Si vous enregistrez des modifications sur cette page, les brouillons seront supprimés.",
+	"drafts-warning-deprecated-draft": "Attention, cette page a été modifiée par un autre utilisateur depuis la création de ce brouillon. Si vous enregistrez celui-ci, les modifications faites par les autres utilisateurs depuis la création de ce brouillon seront écrasées.",
 	"drafts-view-saved": "Enregistré",
 	"drafts-view-discard": "Abandonner",
 	"drafts-view-nonesaved": "Vous n’avez actuellement enregistré aucun brouillon.",

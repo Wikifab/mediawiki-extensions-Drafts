@@ -15,6 +15,8 @@
 	"drafts-view-summary": "Used in [[Special:Drafts]] when there is at least one draft saved. Parameters:\n* $1 - number of days. Default value: 30",
 	"drafts-view-article": "Name of column in Special:Drafts, when there are draft versions saved.\n\n{{Identical|Page}}",
 	"drafts-view-existing": "Shown at the top while editing a page with draft versions saved",
+	"drafts-view-existing-message": "message shown at the top while editing a page with draft versions saved",
+	"drafts-warning-deprecated-draft": "message shown when editing a draft which has been created before last changes of the current page, to remind that saving draft overwrite last changes",
 	"drafts-view-saved": "Name of column in [[Special:Drafts]].\n\nThis message is followed by timestamp (time and date) when there are draft versions saved.\n{{Identical|Saved}}",
 	"drafts-view-discard": "{{doc-actionlink}}\nName of button to delete draft version of a page.",
 	"drafts-view-nonesaved": "Displayed in Special:Drafts when there are no draft versions saved",

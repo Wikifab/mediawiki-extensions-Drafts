@@ -83,7 +83,7 @@ class PageFormConnectors {
 		$formTitle = self::getFormTitle($pageName);
 
 		if( ! $formTitle ) {
-			// if page doesn't exists yet, form name is in url : wpDraftTitle = 'Spécial:AjouterDonnées/Tutoriel/testdraft
+			// if page doesn't exists yet, form name is in title , ex : wpDraftTitle = 'Spécial:AjouterDonnées/Tutoriel/testdraft
 			$draftTitleName = $formData['wpDraftTitle'];
 			if (preg_match('#^([^/]+)/([^/]+)/([^/]+)$#', $draftTitleName, $matches) ) {
 				$formTitle = \Title::makeTitleSafe( PF_NS_FORM, $matches[2]);

@@ -149,6 +149,9 @@ class DraftHooks {
 				$out->addHTML( Xml::element(
 					'h3', null, $context->msg( 'drafts-view-existing' )->text() )
 				);
+				$out->addHTML( Xml::element(
+					'p', null, $context->msg( 'drafts-view-existing-message' )->text() )
+				);
 				$out->addHTML( Drafts::display( $context->getTitle() ) );
 				$out->addHTML( Xml::closeElement( 'div' ) );
 			} else {
@@ -212,6 +215,7 @@ class DraftHooks {
 		$context = $editpage->getContext();
 		$user = $context->getUser();
 		global $wgRequest;
+		$warningDeprecatedDraft = false;
 
 
 		$wgRequest->setVal('Tuto Details[Description]', 'Big description');
@@ -238,6 +242,18 @@ class DraftHooks {
 				$editpage->summary = $draft->getSummary();
 				$editpage->scrolltop = $draft->getScrollTop();
 				$editpage->minoredit = $draft->getMinorEdit() ? true : false;
+
+				// check if actual Draft is out of date :
+				// get page last Edit time
+				$title = $draft->getTitle();
+				if($title) {
+					$lastEdit = Revision::getTimestampFromId($title, $title->getLatestRevID());
+					$draftStartTimestamp = $draft->getStartTime();
+					if($lastEdit > $draftStartTimestamp) {
+						$warningDeprecatedDraft = true;
+					}
+				}
+
 			}
 
 			// Save draft on non-save submission
@@ -273,6 +289,8 @@ class DraftHooks {
 
 		$out = $context->getOutput();
 
+
+
 		$numDrafts = Drafts::num( $context->getTitle() );
 		// Show list of drafts
 		if ( $numDrafts  > 0 ) {
@@ -283,7 +301,16 @@ class DraftHooks {
 				$out->addHTML( Xml::element(
 						'h3', null, $context->msg( 'drafts-view-existing' )->text() )
 						);
+				$out->addHTML( Xml::element(
+						'p', null, $context->msg( 'drafts-view-existing-message' )->text() )
+						);
 				$out->addHTML( Drafts::display( $context->getTitle() ) );
+
+				if ($warningDeprecatedDraft) {
+					$out->addHTML( Xml::element(
+						'p', null, $context->msg( 'drafts-warning-deprecated-draft' )->text() )
+					);
+				}
 				$out->addHTML( Xml::closeElement( 'div' ) );
 			} else {
 				$jsWarn = "if( !wgAjaxSaveDraft.insync ) return confirm(" .
