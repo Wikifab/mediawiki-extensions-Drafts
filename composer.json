@@ -1,0 +1,7 @@
+{
+    "name": "wikifab/Drafts",
+    "description": "This is a mediawiki extension auto save draft the peages while editing",
+    "type": "mediawiki-extension",
+    "require": {
+    }
+}
