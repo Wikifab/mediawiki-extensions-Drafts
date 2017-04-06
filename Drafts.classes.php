@@ -160,8 +160,8 @@ abstract class Drafts {
 				$drafts[] = Draft::newFromRow( $row );
 			}
 		}
-		// Returns array of matching drafts or null if there were none
-		return count( $drafts ) ? $drafts : null;
+		// Returns array of matching drafts or empty array if there were none
+		return count( $drafts ) ? $drafts : [];
 	}
 
 	/**
