@@ -79,7 +79,7 @@ function Draft() {
 		// Sets state to saving
 		self.setState( 'saving' );
 		var params;
-		
+
 		if( ! editIsPageForm) {
 			params = {
 				action: 'savedrafts',
@@ -96,7 +96,7 @@ function Draft() {
 			};
 		} else {
 			var formdata = JSON.stringify( $(form).serializeArray() );
-			
+
 			params = {
 				action: 'savedrafts',
 				drafttoken: form.wpDraftToken.value,
@@ -121,10 +121,6 @@ function Draft() {
 		var api = new mediaWiki.Api();
 		api.post(params).done( self.respond ).fail( self.respond );
 
-		// Re-allow request if it is not done in 10 seconds
-		self.timeoutID = window.setTimeout(
-			"wgDraft.setState( 'changed' );", 10000
-		);
 		// Ensure timer is cleared in case we saved manually before it expired
 		clearTimeout( timer );
 		timer = null;
@@ -143,8 +139,8 @@ function Draft() {
 			if ( configuration.autoSaveWait && configuration.autoSaveWait > 0 ) {
 				// Sets timer to save automatically after a period of time
 				timer = setTimeout(
-					'wgDraft.save();', configuration.autoSaveWait * 1000
-				);
+						this.save, configuration.autoSaveWait * 1000
+					);
 			}
 			return;
 		}
@@ -157,7 +153,7 @@ function Draft() {
 		if ( configuration.autoSaveWait && configuration.autoSaveWait > 0 ) {
 			// Sets timer to save automatically after a period of time
 			timer = setTimeout(
-				'wgDraft.save();', configuration.autoSaveWait * 1000
+					this.save, configuration.autoSaveWait * 1000
 			);
 		}
 	};
@@ -196,13 +192,13 @@ function Draft() {
 						if ( event.which < 32 ){
 							return true;
 						}
-	
+
 						return self.change ( event );
 					} )
 					.on( 'change', 'input,select,textarea', self.change  )
 					.on( 'click', '.multipleTemplateAdder,.removeButton,.rearrangerImage', self.change  )
 					.on( 'mousedown', '.rearrangerImage',self.change  );
-				
+
 				// Gets configured specific values
 				configuration = {
 					autoSaveWait: mediaWiki.config.get( 'wgDraftAutoSaveWait' ),
@@ -211,9 +207,9 @@ function Draft() {
 				};
 			}
 		}
-		
-		
-		
+
+
+
 	};
 
 	/**
