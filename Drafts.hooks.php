@@ -336,19 +336,26 @@ class DraftHooks {
 	 */
 	public static function onFormPrinterSetup ( $formPrinter ) {
 		// register new input button for pageForms templates
-		$formPrinter->setInputTypeHook('saveDraft', 'DraftHooks::pageFormInputSaveDraft', array());
+		//$formPrinter->setInputTypeHook('saveDraft', 'DraftHooks::pageFormInputSaveDraft', array());
 	}
 
+
 	/**
-	 * for use with PageForm extension :
-	 * Add draft saving control for use in PageForm templates
+	 * for use with PageForm extension (wikifab forked version)
+	 *
+	 * @param string $html
+	 * @param string $inputName
+	 * @return boolean
 	 */
-	public static function pageFormInputSaveDraft($cur_value, $input_name, $is_mandatory, $is_disabled, $field_args) {
-		// TODO : manage hook PageForms::EditFormPreloadText
+	public static function onDisplayStandardInputButton(& $html, $inputName) {
 		global $wgUser, $wgOut, $wgRequest;
 
+
+		if ($inputName != 'saveDraft') {
+			return true;
+		}
 		if ( ! $wgUser || !$wgUser->getOption( 'extensionDrafts_enable', 'true' ) ) {
-			return '';
+			return true;
 		}
 		$wgOut->addModules( 'ext.Drafts' );
 		//$title = Title::newFromText( $wgRequest->getText('title') );
@@ -410,7 +417,7 @@ class DraftHooks {
 						'value' => $wgRequest->getText('title') //$title->getPrefixedText()
 				)
 				);
-		return $html;
+		return true;
 	}
 
 	/**

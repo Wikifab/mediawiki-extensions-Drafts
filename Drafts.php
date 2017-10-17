@@ -102,7 +102,10 @@ $wgHooks['EditPage::showEditForm:initial'][] = 'DraftHooks::loadForm';
 $wgHooks['ResourceLoaderGetConfigVars'][] = "DraftHooks::onResourceLoaderGetConfigVars";
 
 // Register controls input for PageForms
-$wgHooks['PageForms::FormPrinterSetup'][] = 'DraftHooks::onFormPrinterSetup';
+//old one, doesn't work anymore :
+//$wgHooks['PageForms::FormPrinterSetup'][] = 'DraftHooks::onFormPrinterSetup';
+// new one :
+$wgHooks['PageForms::StandardInputButton'][] = 'DraftHooks::onDisplayStandardInputButton';
 
 // Register load hook for PageForms
 $wgHooks['FormEdit::showEditForm:initial'][] = 'DraftHooks::pfLoadForm';
