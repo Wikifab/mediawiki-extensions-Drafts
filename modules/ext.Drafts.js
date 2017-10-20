@@ -23,6 +23,32 @@ function Draft() {
 	var debugMode = true;
 
 	/* Functions */
+	
+	this.setStateClass = function() {
+		$(form.wpDraftSave).removeClass('drafts-unchanged');
+		$(form.wpDraftSave).removeClass('drafts-changed');
+		$(form.wpDraftSave).removeClass('drafts-saved');
+		$(form.wpDraftSave).removeClass('drafts-saving');
+		$(form.wpDraftSave).removeClass('drafts-error');
+		switch ( state ) {
+			case 'unchanged':
+				$(form.wpDraftSave).addClass('drafts-unchanged');
+				break;
+			case 'changed':
+				$(form.wpDraftSave).addClass('drafts-changed');
+				break;
+			case 'saved':
+				$(form.wpDraftSave).addClass('drafts-saved');
+				break;
+			case 'saving':
+				$(form.wpDraftSave).addClass('drafts-saving');
+				break;
+			case 'error':
+				$(form.wpDraftSave).addClass('drafts-error');
+				break;
+			default: break;
+		}
+	}
 
 	/**
 	 * Sets the state of the draft
@@ -33,6 +59,7 @@ function Draft() {
 			// Stores state information
 			state = newState;
 			// Updates UI elements
+			self.setStateClass();
 			switch ( state ) {
 				case 'unchanged':
 					form.wpDraftSave.disabled = true;
