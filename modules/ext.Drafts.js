@@ -141,7 +141,7 @@ function Draft() {
 			if ( configuration.autoSaveWait && configuration.autoSaveWait > 0 ) {
 				// Sets timer to save automatically after a period of time
 				timer = setTimeout(
-						this.save, configuration.autoSaveWait * 1000
+						self.save, configuration.autoSaveWait * 1000
 					);
 			}
 			return;
@@ -155,7 +155,7 @@ function Draft() {
 		if ( configuration.autoSaveWait && configuration.autoSaveWait > 0 ) {
 			// Sets timer to save automatically after a period of time
 			timer = setTimeout(
-					this.save, configuration.autoSaveWait * 1000
+					self.save, configuration.autoSaveWait * 1000
 			);
 		}
 	};
