@@ -19,6 +19,8 @@ function Draft() {
 		// Reference to edit form draft is being edited with
 		form = null,
 		editIsPageForm = false;
+	
+	var debugMode = true;
 
 	/* Functions */
 
@@ -233,4 +235,8 @@ function Draft() {
 }
 
 wgDraft = new Draft();
-wgDraft.initialize();
+$(function() {
+	// Handler for .ready() called.
+	wgDraft.initialize();
+});
+
