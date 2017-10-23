@@ -417,6 +417,32 @@ class DraftHooks {
 						'value' => $wgRequest->getText('title') //$title->getPrefixedText()
 				)
 				);
+
+		// add modal :
+
+		$connexionUrl = SpecialPage::getTitleFor('connexion')->getFullURL();
+		$connextionLink = '<a href="' . $connexionUrl . '" target="_blank">' . wfMessage('login') . '</a>';
+
+		$html .= '
+			<div id="draft-error-modal" class="modal fade" role="dialog">
+			  <div class="modal-dialog">
+
+				<!-- Modal content-->
+				<div class="modal-content">
+				  <div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">'.wfMessage('drafts-save-error')->plain() .'</h4>
+				  </div>
+				  <div class="modal-body">
+						'. wfMessage('draft-saving-error-message', $connextionLink)->plain() . '
+				  </div>
+				  <div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">'.wfMessage('cancel')->plain().'</button>
+				  </div>
+				</div>
+
+			  </div>
+			</div>';
 		return true;
 	}
 
@@ -509,7 +535,7 @@ class DraftHooks {
 	 */
 	public static function onResourceLoaderGetConfigVars( &$vars ) {
 		global $egDraftsAutoSaveWait, $egDraftsAutoSaveTimeout,
-		       $egDraftsAutoSaveInputBased;
+			   $egDraftsAutoSaveInputBased;
 		$vars['wgDraftAutoSaveWait'] = $egDraftsAutoSaveWait;
 		$vars['wgDraftAutoSaveTimeout'] = $egDraftsAutoSaveTimeout;
 		$vars['wgDraftAutoSaveInputBased'] = $egDraftsAutoSaveInputBased;

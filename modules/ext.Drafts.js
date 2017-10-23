@@ -193,9 +193,12 @@ function Draft() {
 	this.initialize = function() {
 		// Cache edit form reference
 		form = document.editform;
-		self.setStateClass();
+		
 		// Check to see that the form and controls exist
 		if ( form && form.wpDraftSave ) {
+
+			self.setStateClass();
+			
 			// Handle manual draft saving through clicking the save draft button
 			jQuery( form.wpDraftSave ).on( 'click', self.save );
 			// Handle keeping track of state by watching for changes to fields
@@ -213,6 +216,9 @@ function Draft() {
 		} else {
 			// init for formEdit action (PageForm extension)
 			form = document.forms['pfForm']
+
+			self.setStateClass();
+			
 			if ( form && form.wpDraftSave ) {
 				editIsPageForm = true;
 				jQuery( form.wpDraftSave ).on( 'click', self.pfSave );
@@ -237,9 +243,11 @@ function Draft() {
 				};
 			}
 		}
-
-
-
+	};
+	
+	this.errorPopup = function () {
+		console.log('error Popup display');
+		$('#draft-error-modal').modal();
 	};
 
 	/**
@@ -247,7 +255,7 @@ function Draft() {
 	 * @param {Object} data
 	 */
 	this.respond = function( data ) {
-
+		
 		// Checks that an error did not occur
 		if ( data.savedrafts && data.savedrafts.id ) {
 			// Changes state to saved
@@ -258,6 +266,7 @@ function Draft() {
 		} else {
 			// Changes state to error
 			self.setState( 'error' );
+			self.errorPopup();
 		}
 	};
 }

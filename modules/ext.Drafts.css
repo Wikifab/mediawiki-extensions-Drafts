@@ -21,3 +21,11 @@
 .rtl #drafts-list-table td, .rtl #drafts-list-table th {
 	text-align: right;
 }
+
+#draft-error-modal {
+	color:#000;
+}
+#draft-error-modal a,
+#draft-error-modal a:link {
+	color:#2c9ab7;
+}
