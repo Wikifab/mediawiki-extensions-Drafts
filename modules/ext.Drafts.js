@@ -193,6 +193,7 @@ function Draft() {
 	this.initialize = function() {
 		// Cache edit form reference
 		form = document.editform;
+		self.setStateClass();
 		// Check to see that the form and controls exist
 		if ( form && form.wpDraftSave ) {
 			// Handle manual draft saving through clicking the save draft button
