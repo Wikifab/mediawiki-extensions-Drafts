@@ -7,6 +7,8 @@
  */
 
 class DraftHooks {
+
+	private static $buttonAdded = false;
 	/**
 	 * @param $defaultOptions array
 	 * @return bool
@@ -418,12 +420,29 @@ class DraftHooks {
 				)
 				);
 
-		// add modal :
+		self::$buttonAdded = true;
 
+		return true;
+	}
+
+	/**
+	 * @param OutputPage $out
+	 * @param Skin $skin
+	 * @return bool
+	 * Hook: BeforePageDisplay
+	 */
+	public static function addModules( $out, $skin ) {
+
+		// add modal div to display error message when saving draft fail
+		if(self::$buttonAdded) {
+			$out->addHTML(self::getErrorModalHtml());
+		}
+	}
+
+	private static function getErrorModalHtml() {
 		$connexionUrl = SpecialPage::getTitleFor('connexion')->getFullURL();
 		$connextionLink = '<a href="' . $connexionUrl . '" target="_blank">' . wfMessage('login') . '</a>';
-
-		$html .= '
+		return '
 			<div id="draft-error-modal" class="modal fade" role="dialog">
 			  <div class="modal-dialog">
 
@@ -443,7 +462,6 @@ class DraftHooks {
 
 			  </div>
 			</div>';
-		return true;
 	}
 
 	/**
