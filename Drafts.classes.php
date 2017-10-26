@@ -362,6 +362,7 @@ abstract class Drafts {
 				// Build XML
 
 				$html .= Xml::openElement ( 'li' );
+				// page name with link to resume :
 				$html .= Xml::openElement ( 'span' );
 				$html .= Xml::element ( 'a', array (
 						'href' => $urlLoad,
@@ -369,6 +370,7 @@ abstract class Drafts {
 				), $htmlTitle );
 				$html .= Xml::closeElement ( 'span' );
 				$html .=' ';
+				// label with datetime :
 				$html .= Xml::element ( 'span', array (
 						'class' => 'draft-savetime-label'
 				), wfMessage ( 'drafts-view-saved' )->text () );
@@ -377,6 +379,16 @@ abstract class Drafts {
 						'class' => 'draft-savetime'
 				), MWTimestamp::getInstance ( $draft->getSaveTime () )->getHumanTimestamp () );
 				$html .=' ';
+				// link to resume draft :
+				$html .= Xml::openElement ( 'span' );
+				$html .= Xml::element ( 'a', array (
+						'href' => $urlLoad,
+						'style' => 'font-weight:' . ($currentDraft->getID () == $draft->getID () ? 'bold' : 'normal')
+				), wfMessage ( 'drafts-view-resume' )->text () );
+				$html .= Xml::closeElement ( 'span' );
+				$html .=' - ';
+				$html .= Xml::closeElement ( 'span' );
+				// link to disccard draft :
 				$html .= Xml::openElement ( 'span', array (
 						'class' => 'draft-discard'
 				) );

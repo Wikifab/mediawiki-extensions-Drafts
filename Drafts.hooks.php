@@ -433,7 +433,7 @@ class DraftHooks {
 	 */
 	public static function addModules( $out, $skin ) {
 
-		// add modal div to display error message when saving draft fail
+		// add modal div to display error message when save draft fail
 		if(self::$buttonAdded) {
 			$out->addHTML(self::getErrorModalHtml());
 		}
