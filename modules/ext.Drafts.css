@@ -30,5 +30,5 @@ border-radius: 5px;
 }
 #draft-error-modal a,
 #draft-error-modal a:link {
-	color:#2c9ab7;
+	color:var(--main-hover-color);
 }
