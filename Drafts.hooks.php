@@ -443,7 +443,7 @@ class DraftHooks {
 		$connexionUrl = SpecialPage::getTitleFor('connexion')->getFullURL();
 		$connextionLink = '<a href="' . $connexionUrl . '" target="_blank">' . wfMessage('login') . '</a>';
 		return '
-			<div id="draft-error-modal" class="modal fade" role="dialog">
+			<div id="draft-error-modal" class="dk-modal modal fade" role="dialog">
 			  <div class="modal-dialog">
 
 				<!-- Modal content-->
