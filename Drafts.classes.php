@@ -261,6 +261,7 @@ abstract class Drafts {
 				$html .= Xml::element( 'a',
 					array(
 						'href' => $urlLoad,
+						'class' => 'draft-being-edited',
 						'style' => 'font-weight:' .
 							(
 								$currentDraft->getID() == $draft->getID() ?
@@ -366,6 +367,7 @@ abstract class Drafts {
 				$html .= Xml::openElement ( 'span' );
 				$html .= Xml::element ( 'a', array (
 						'href' => $urlLoad,
+						'class' => 'draft-being-edited',
 						'style' => 'font-weight:' . ($currentDraft->getID () == $draft->getID () ? 'bold' : 'normal')
 				), $htmlTitle );
 				$html .= Xml::closeElement ( 'span' );
@@ -383,10 +385,10 @@ abstract class Drafts {
 				$html .= Xml::openElement ( 'span' );
 				$html .= Xml::element ( 'a', array (
 						'href' => $urlLoad,
+						'class' => 'draft-being-edited',
 						'style' => 'font-weight:' . ($currentDraft->getID () == $draft->getID () ? 'bold' : 'normal')
 				), wfMessage ( 'drafts-view-resume' )->text () );
 				$html .= Xml::closeElement ( 'span' );
-				$html .=' - ';
 				$html .= Xml::closeElement ( 'span' );
 				// link to disccard draft :
 				$html .= Xml::openElement ( 'span', array (
