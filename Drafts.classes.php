@@ -261,7 +261,6 @@ abstract class Drafts {
 				$html .= Xml::element( 'a',
 					array(
 						'href' => $urlLoad,
-						'class' => 'draft-being-edited',
 						'style' => 'font-weight:' .
 							(
 								$currentDraft->getID() == $draft->getID() ?
