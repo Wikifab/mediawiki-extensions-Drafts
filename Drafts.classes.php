@@ -261,6 +261,7 @@ abstract class Drafts {
 				$html .= Xml::element( 'a',
 					array(
 						'href' => $urlLoad,
+						'class' => 'draft-being-edited-1',
 						'style' => 'font-weight:' .
 							(
 								$currentDraft->getID() == $draft->getID() ?
@@ -366,7 +367,7 @@ abstract class Drafts {
 				$html .= Xml::openElement ( 'span' );
 				$html .= Xml::element ( 'a', array (
 						'href' => $urlLoad,
-						'class' => 'draft-being-edited',
+						'class' => 'draft-being-edited-2',
 						'style' => 'font-weight:' . ($currentDraft->getID () == $draft->getID () ? 'bold' : 'normal')
 				), $htmlTitle );
 				$html .= Xml::closeElement ( 'span' );
@@ -384,7 +385,7 @@ abstract class Drafts {
 				$html .= Xml::openElement ( 'span' );
 				$html .= Xml::element ( 'a', array (
 						'href' => $urlLoad,
-						'class' => 'draft-being-edited',
+						'class' => 'draft-being-edited-3',
 						'style' => 'font-weight:' . ($currentDraft->getID () == $draft->getID () ? 'bold' : 'normal')
 				), wfMessage ( 'drafts-view-resume' )->text () );
 				$html .= Xml::closeElement ( 'span' );
