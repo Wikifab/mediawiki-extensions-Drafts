@@ -261,11 +261,10 @@ abstract class Drafts {
 				$html .= Xml::element( 'a',
 					array(
 						'href' => $urlLoad,
-						'class' => 'draft-being-edited-1',
-						'style' => 'font-weight:' .
+						'class' => 'draft-' .
 							(
 								$currentDraft->getID() == $draft->getID() ?
-								'bold' : 'normal'
+								'-being-edited-1' : '-not-being-edited'
 							)
 					),
 					$htmlTitle
@@ -367,8 +366,7 @@ abstract class Drafts {
 				$html .= Xml::openElement ( 'span' );
 				$html .= Xml::element ( 'a', array (
 						'href' => $urlLoad,
-						'class' => 'draft-being-edited-2',
-						'style' => 'font-weight:' . ($currentDraft->getID () == $draft->getID () ? 'bold' : 'normal')
+						'class' => 'draft' . ($currentDraft->getID () == $draft->getID () ? '-being-edited-2' : '-not-being-edited')
 				), $htmlTitle );
 				$html .= Xml::closeElement ( 'span' );
 				$html .=' ';
@@ -385,8 +383,7 @@ abstract class Drafts {
 				$html .= Xml::openElement ( 'span' );
 				$html .= Xml::element ( 'a', array (
 						'href' => $urlLoad,
-						'class' => 'draft-being-edited-3',
-						'style' => 'font-weight:' . ($currentDraft->getID () == $draft->getID () ? 'bold' : 'normal')
+						'class' => 'draft' . ($currentDraft->getID () == $draft->getID () ? '-being-edited-3' : '-not-being-edited')
 				), wfMessage ( 'drafts-view-resume' )->text () );
 				$html .= Xml::closeElement ( 'span' );
 				$html .= Xml::closeElement ( 'span' );
