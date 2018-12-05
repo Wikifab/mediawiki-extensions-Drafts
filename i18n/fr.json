@@ -29,7 +29,7 @@
 	"drafts-save-saved": "Enregistré",
 	"drafts-save-saving": "Enregistrement en cours",
 	"drafts-save-error": "Erreur d’enregistrement du brouillon",
-	"draft-saving-error-message": "Une erreur s'est produite lors de l'enregistrement du brouillon. Cela peut provenir d'une perte de session, vérifiez que vous êtes bien connecté ici : $1 .",
+	"draft-saving-error-message": "Une erreur s'est produite lors de l'enregistrement du brouillon. Cela peut provenir d'une perte de session, vérifiez que vous êtes bien connecté ici : $1.",
 	"drafts-enable": "Activer la fonctionnalité pour enregistrer un brouillon dans le formulaire de modification",
 	"prefs-extension-drafts": "Brouillons",
 	"tooltip-drafts-save": "Enregistrer comme brouillon",

@@ -24,7 +24,7 @@
 	"drafts-save-saved": "Saved",
 	"drafts-save-saving": "Saving",
 	"drafts-save-error": "Error saving draft",
-	"draft-saving-error-message": "An error occurs while saving draft. It may be a connexion lost, check that you are logged in here : $1 .",
+	"draft-saving-error-message": "An error occurs while saving draft. It may be a connexion lost, check that you are logged in here : $1.",
 	"drafts-enable": "Enable feature to save a draft in edit form",
 	"prefs-extension-drafts": "Drafts",
 	"tooltip-drafts-save": "Save as a draft",
