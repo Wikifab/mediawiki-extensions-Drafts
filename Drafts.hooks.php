@@ -75,7 +75,6 @@ class DraftHooks {
 		// or other param : when saving a page, we delete every draft of this page, for the current user
 		$drafts = Drafts::get( $title, $user->getID());
 		foreach ($drafts as $draft) {
-			echo 'DELETE DRAFT ' . $draft->getId() . '<br/>';
 			$draft->discard( $user );
 		}
 		// Continue
